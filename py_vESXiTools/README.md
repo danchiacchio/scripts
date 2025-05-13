@@ -21,6 +21,8 @@ A Python script that automates the process of **checking** and **upgrading VMwar
 - `paramiko` library (SSH connections)
 - SSH must be enabled on all ESXi hosts
 - All ESXi hosts must use the **same root password**
+- Download the VMware Tools Package (VMware Tools Offline VIB Bundle .zip) and place it on the same script directory
+- Edit the script to type the correct VMware Tools Offline VIB Bundle name
 
 Install `paramiko` if needed:
 
