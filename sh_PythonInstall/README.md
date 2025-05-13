@@ -17,7 +17,7 @@ This script installs **Python 3.12.3** on a fresh **CentOS 9** system. It sets u
 Clone this repo or download the script directly:
 
 ```bash
-curl -O https://raw.githubusercontent.com/danchiacchio/scripts/tree/main/sh_PythonInstall/install-python.sh
+curl -O https://raw.githubusercontent.com/danchiacchio/scripts/refs/heads/main/sh_PythonInstall/install-python.sh
 chmod +x install-python.sh
 ./install-python.sh
 
