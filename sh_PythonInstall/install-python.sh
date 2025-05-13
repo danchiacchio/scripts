@@ -33,9 +33,8 @@ sudo make altinstall  # Avoid overwriting system python
 echo "✅ Installed Python version:"
 /usr/local/bin/python3.12 --version
 
-# Optional: Symlink python3 and pip3 to the new version
-sudo ln -sf /usr/local/bin/python3.12 /usr/local/bin/python3
-sudo ln -sf /usr/local/bin/pip3.12 /usr/local/bin/pip3
-
+sudo rm /usr/bin/python
+sudo ln -sf /usr/local/bin/python3.12 /usr/bin/python
+#python --version
 echo "🎉 Python $PYTHON_VERSION installed successfully!"
 
