@@ -35,6 +35,8 @@ echo "✅ Installed Python version:"
 
 sudo rm /usr/bin/python
 sudo ln -sf /usr/local/bin/python3.12 /usr/bin/python
+sudo ln -s /usr/local/bin/pip3.12 /usr/local/bin/pip
+sudo ln -s /usr/local/bin/pip3.12 /usr/local/bin/pip3
 #python --version
 echo "🎉 Python $PYTHON_VERSION installed successfully!"
 
