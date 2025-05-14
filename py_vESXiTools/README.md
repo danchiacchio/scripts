@@ -18,12 +18,12 @@ A Python script that automates the process of **checking** and **upgrading VMwar
 ## Script versions:
 
 py_vESXiTools.py
--- This is the first version;
--- It is necessary to manually create the esxi_hosts.txt file and add all ESXi hosts into this file.
+- This is the first version;
+- It is necessary to manually create the esxi_hosts.txt file and add all ESXi hosts into this file.
 
 py_vESXiTools-v2.py
--- This is the newest version;
--- It can grab all ESXi hosts under the vCenter Server and create the file esxi_hosts.txt with all ESXi hosts.
+- This is the newest version;
+- It can grab all ESXi hosts under the vCenter Server and create the file esxi_hosts.txt with all ESXi hosts.
 
 ---
 
