@@ -1,0 +1,3 @@
+vcf-esxi01.lab.local
+vcf-esxi02.lab.local
+vcf-esxi03.lab.local
