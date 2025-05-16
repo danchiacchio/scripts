@@ -16,13 +16,18 @@ def show_banner():
     print("🔧 VMware Tools ESXi Manager".center(60))
     print("=" * 60)
     print("⚠️  All ESXi hosts must have the SAME root password.")
-    print("ℹ️  This script uses SSH to connect to each host.\n")
+    print("ℹ️  This script uses SSH to connect to each host. The SSH service must be enabled on all hosts.\n")
 show_banner()
 
 # Disable SSL certificate verification
 context = ssl._create_unverified_context()
 
 # VMware Tools file and temp dir
+# Explanation: This line uses the os.path.basename() function (from Python’s os module) to extract just the file name from the full path given in local_file_path.
+#So, for example, if local_file_path was:
+#"/home/user/downloads/VMware-Tools-12.5.2-core-offline-depot-ESXi-all-24697584.zip"
+#Then file_name would be:
+#"VMware-Tools-12.5.2-core-offline-depot-ESXi-all-24697584.zip"
 local_file_path = "VMware-Tools-12.5.2-core-offline-depot-ESXi-all-24697584.zip"
 temp_dir_name = "vmware-tools-temp"
 file_name = os.path.basename(local_file_path)
@@ -80,10 +85,10 @@ def get_vmware_tools_versions(host, esxi_username, esxi_password):
 
     for host in hostnames:
         print(f"🔄 Connecting to {host} via SSH...")    
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname=host, username=esxi_username, password=esxi_password, timeout=10)
-        
+#        ssh = paramiko.SSHClient()
+#        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#        ssh.connect(hostname=host, username=esxi_username, password=esxi_password, timeout=10)  
+        ssh = connect_ssh(host, esxi_username, esxi_password) 
         if ssh:
             stdin, stdout, stderr = ssh.exec_command("esxcli software vib list | grep -i tools | awk '{print$2}'")
             output = stdout.read().decode().strip()
@@ -91,7 +96,6 @@ def get_vmware_tools_versions(host, esxi_username, esxi_password):
             version = output.splitlines()[0] if output else "Not found"
             results.append((host, version))
             ssh.close()            
-
         else:
             results.append((host, "Connection failed"))
 
