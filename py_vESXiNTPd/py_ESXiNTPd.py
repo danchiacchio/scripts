@@ -19,9 +19,9 @@ def show_banner():
 show_banner()
 
 # Get credentials
-vcenter_address = input("vCenter address: ")
-vcenter_username = input("vCenter Username: ")
-vcenter_password = getpass.getpass("vCenter Password: ")
+vcenter_address = input("🌐 vCenter address: ")
+vcenter_username = input("👤 vCenter Username: ")
+vcenter_password = getpass.getpass("🔐 vCenter Password: ")
 #esxi_username = input("ESXi Username: ")
 #esxi_password = getpass.getpass("ESXi Password: ")
 print()
@@ -193,9 +193,9 @@ def run_command(ssh, command):
 
 
 def run_esxi_command():
-    esxi_username = input("ESXi Username: ")
-    esxi_password = getpass.getpass("ESXi Password: ")
-    esxi_command = input("ESXi command: ")
+    esxi_username = input("👤 ESXi Username: ")
+    esxi_password = getpass.getpass("🔐 ESXi Password: ")
+    esxi_command = input("⚙️  ESXi command: ")
     hosts = get_hosts()
     for host in hosts:
         ip = host.name
