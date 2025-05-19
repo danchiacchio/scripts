@@ -1,0 +1,7 @@
+restrict default nomodify notrap nopeer noquery
+restrict 127.0.0.1
+restrict -6 ::1
+driftfile /etc/ntp.drift
+logconfig +clockstatus +peerstatus +sysstatus +syncstatus
+server 192.168.255.3
+tos maxdist 30
