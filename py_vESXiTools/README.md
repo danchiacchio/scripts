@@ -1,4 +1,4 @@
-# 🔧 VMware Tools ESXi Manager
+# 🔧 VMware Tools ESXi Upgrader
 
 A Python script that automates the process of **checking** and **upgrading VMware Tools** on multiple ESXi hosts via SSH.
 
