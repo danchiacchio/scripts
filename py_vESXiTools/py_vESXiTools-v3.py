@@ -13,7 +13,7 @@ os.system('cls' if os.name == 'nt' else 'clear')
 # Banner
 def show_banner():
     print("=" * 60)
-    print("🔧 VMware Tools ESXi Manager".center(60))
+    print("🔧 VMware Tools ESXi Upgrader".center(60))
     print("=" * 60)
 
 show_banner()
