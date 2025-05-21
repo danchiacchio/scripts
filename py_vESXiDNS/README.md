@@ -11,6 +11,18 @@ A Python-based interactive script to manage DNS configurations on multiple conne
 - 💻 Execute custom commands on all ESXi hosts
 - 🚧 Expandable menu for future functionality
 
+
+## Script versions:
+py_vESXiDNS.py
+- This is the first script version
+- All features are enabled here
+
+py_vESXiDNS-v2.py
+- This is an enhance version of the first script
+- The first version executes all options considering all ESXi in the same vCenter, regardless of the Cluster that they are - this can be bad for large environments with many clusters in the same vCenter
+- With this version, you can select which clusters to work for
+
+
 ---
 
 ## 🔐 Requirements
