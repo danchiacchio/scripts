@@ -15,7 +15,7 @@ A Python-based interactive script to manage DNS configurations on multiple conne
 ## Script versions:
 py_vESXiDNS.py
 - This is the first script version
-- All features are enabled here
+- All features are enabled on this version
 
 py_vESXiDNS-v2.py
 - This is an enhance version of the first script
