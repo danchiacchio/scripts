@@ -12,6 +12,17 @@ A Python script that automates the process of manager the NTP daemon on connecte
 - ✅ Can stop and start the NTP service on ESXi hosts
 - ✅ Can change the NTP client configuration
 
+## Script Versions
+py_vESXiNTPd.py
+- This is the first script version
+- All features are enabled on this version
+
+py_vESXiNTPd-v2.py
+- This is an enhance version of the first script
+- The first version executes all options considering all ESXi in the same vCenter, regardless of the Cluster that they are - this can be bad for large environments with many clusters in the same vCenter
+- With this version, you can select which clusters to work for. It provided more flexibility to work in multi-cluster environment
+
+
 ---
 
 ## 📋 Requirements
