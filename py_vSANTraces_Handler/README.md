@@ -4,6 +4,16 @@ This script is a helper utility to connect to a VMware vCenter, list clusters, a
 
 ---
 
+## 🔧 Features
+
+- ✅ View vSAN Traces details
+- ✅ Get vSAN Traces Usage
+- ✅ Change the vSAN Traces Directory
+- ✅ List the most recent vSAN Traces files
+- ✅ List all ESXi mount points
+
+---
+
 ## 📦 Requirements
 
 - Python 3
