@@ -6,6 +6,7 @@ import getpass
 import paramiko
 import os
 from prettytable import PrettyTable
+import sys
 
 # Screen clear
 os.system('cls' if os.name == 'nt' else 'clear')
@@ -18,6 +19,7 @@ def show_banner():
 
 show_banner()
 
+"""
 # Get credentials
 vcenter_address = input("🌐 vCenter address: ")
 vcenter_username = input("👤 vCenter SSO Username: ")
@@ -31,6 +33,31 @@ context = ssl._create_unverified_context()
 si = SmartConnect(host=vcenter_address, user=vcenter_username, pwd=vcenter_password, sslContext=context)
 atexit.register(Disconnect, si)
 content = si.RetrieveContent()
+"""
+
+# Function: Connect to vCenter
+def get_si_instance(vcenter, user, pwd, port=443):
+    context = ssl._create_unverified_context()
+    try:
+        si = SmartConnect(host=vcenter_address, user=vcenter_username, pwd=vcenter_password, port=port, sslContext=context)
+        return si
+    except vim.fault.InvalidLogin:
+        print("❌ Invalid username or password. Please try again.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Failed to connect to vCenter: {e}")
+        sys.exit(1)
+
+# Get credentials
+vcenter_address = input("🌐 vCenter IP/FQDN: ")
+vcenter_username = input("👤 vCenter SSO Username: ")
+vcenter_password = getpass.getpass(prompt='🔐 vCenter SSO Password: ')
+
+# Connect to vCenter using the function get_si_instance
+si = get_si_instance(vcenter_address, vcenter_username, vcenter_password)
+content = si.RetrieveContent()
+
+
 
 def get_hosts():
     container = content.viewManager.CreateContainerView(content.rootFolder, [vim.HostSystem], True)
