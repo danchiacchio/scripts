@@ -1,3 +1,7 @@
+#!/usr/bin/python
+"""
+Written by Danilo Perillo Chiacchio - VxRail Team LATAM
+"""
 from pyVim.connect import SmartConnect, Disconnect
 from pyVmomi import vim
 import ssl
@@ -8,6 +12,24 @@ import sys
 
 # Screen clear
 os.system('cls' if os.name == 'nt' else 'clear')
+
+# Help function
+def print_help():
+    print("""
+
+This script can automate the management activities of the vSAN Traces files.
+After executing the script, you'll see a menu. Just explore the options to learn more about each one.
+
+Usage: python pyvSANTracesHandler.py [options]
+
+Options:
+  -h, --help        Show this help message and exit
+""")
+
+# Run help and exit if -h or --help is passed
+if '-h' in sys.argv or '--help' in sys.argv:
+    print_help()
+    sys.exit(0)
 
 # Function: Connect to vCenter
 def get_si_instance(vcenter, user, pwd, port=443):
@@ -29,9 +51,14 @@ def show_banner():
     print("=" * 60)
 show_banner()
 
+
 # Get credentials
 vcenter = input("🌐 vCenter IP/FQDN: ")
-user = input("👤 vCenter SSO Username: ")
+#user = input("👤 vCenter SSO Username: ")
+user = "administrator@vsphere.local"
+user_input = input(f"👤 vCenter SSO Username (default: {user}): ")
+if user_input:
+    user = user_input
 pwd = getpass.getpass(prompt='🔐 vCenter SSO Password: ')
 
 # Connect to vCenter using the function get_si_instance
@@ -114,9 +141,17 @@ def run_command(ssh, command):
     return output if output else error
 
 
-def get_vsan_traces_details(hosts):
-    esxi_username = input("👤 ESXi Username: ")
+def get_esxi_username():
+    esxi_username = "root"
+    esxi_user_input = input(f"👤 ESXi Username (default: {esxi_username}) ")
+    if esxi_user_input:
+	    esxi_username = esxi_user_input
     esxi_password = getpass.getpass("🔐 ESXi Password: ")
+    return esxi_username, esxi_password
+
+
+def get_vsan_traces_details(hosts):
+    esxi_username, esxi_password = get_esxi_username()
     esxi_command = "esxcli vsan trace get"
     print()
 
@@ -153,8 +188,7 @@ def get_vsan_traces():
 
 
 def get_vsan_traces_usage_details(hosts):
-    esxi_username = input("👤 ESXi Username: ")
-    esxi_password = getpass.getpass("🔐 ESXi Password: ")
+    esxi_username, esxi_password = get_esxi_username()
     esxi_command = 'vdf -h | grep -i -E "Ramdisk|vsantraces"'
     print()
 
@@ -191,8 +225,7 @@ def get_vsan_traces_usage():
 
 
 def change_vsan_traces_dir(hosts):
-    esxi_username = input("👤 ESXi Username: ")
-    esxi_password = getpass.getpass("🔐 ESXi Password: ")
+    esxi_username, esxi_password = get_esxi_username()
     new_dir_name = "new_vsantraces"
     os_partial_data_path = input("📝 Type part of the volume path: ")
     print()
@@ -250,8 +283,7 @@ def change_vsan_traces():
 
 
 def get_vsan_traces_files_details(hosts):
-    esxi_username = input("👤 ESXi Username: ")
-    esxi_password = getpass.getpass("🔐 ESXi Password: ")
+    esxi_username, esxi_password = get_esxi_username()
     print()
 
     for host in hosts:
@@ -305,8 +337,7 @@ def get_vsan_traces_files():
 
 
 def get_all_mount_point_usage_details(hosts):
-    esxi_username = input("👤 ESXi Username: ")
-    esxi_password = getpass.getpass("🔐 ESXi Password: ")
+    esxi_username, esxi_password = get_esxi_username()
     esxi_command = "df -h"
     print()
 
