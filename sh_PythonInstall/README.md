@@ -20,6 +20,7 @@ Clone this repo or download the script directly:
 curl -O https://raw.githubusercontent.com/danchiacchio/scripts/refs/heads/main/sh_PythonInstall/install-python.sh
 chmod +x install-python.sh
 ./install-python.sh
+```bash
 
 ---
 
