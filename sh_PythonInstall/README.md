@@ -21,5 +21,7 @@ curl -O https://raw.githubusercontent.com/danchiacchio/scripts/refs/heads/main/s
 chmod +x install-python.sh
 ./install-python.sh
 
+---
+
 Grab a coffee and wait. The installer process takes a while to complete ;-)
 
