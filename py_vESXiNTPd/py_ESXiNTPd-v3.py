@@ -5,6 +5,7 @@ import getpass
 import os
 import paramiko
 import sys
+import tempfile
 
 # Screen clear
 def clear_screen():
@@ -440,6 +441,29 @@ def get_vc_ntp_config():
         print("-"*60)
         print(f"{output} \n")
         ssh.close()
+
+        # Ask to save
+        save_input = input("💾 Do you want to save this output to a temporary file? [y/N]: ").strip().lower()
+        if save_input == "y":
+            custom_name = input("📁 Enter filename (leave empty to auto-generate): ").strip()
+            if custom_name:
+                if not custom_name.endswith(".conf"):
+                    custom_name += ".conf"
+                file_path = os.path.join("/tmp", custom_name)
+            else:
+                # Use auto-generated temp file name
+                with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".conf", prefix="vc_ntp_", dir="/tmp") as temp_file:
+                    file_path = temp_file.name
+
+            # Write the content
+            with open(file_path, "w") as f:
+                f.write(output.strip())
+
+            print(f"✅ Saved to: {file_path}")
+
+        else:
+            print("ℹ️  Output not saved.")
+
     else:
         print(f"❌ Failed to connect to {ip}")
 
@@ -466,12 +490,45 @@ def run_vc_cmd():
          print(f"❌ Failed to connect to {ip}")
 
 
+def change_vc_ntp_config():
+    vc_username = "root"
+    user_input = input(f"👤 vCenter Username (default: {vc_username}): ")
+    if user_input:
+        vc_username = user_input
+    vc_password = getpass.getpass("🔐 Password: ")
+    ip = vcenter
+    local_path = input(f" Type the changed ntp.conf: ")
+    remote_path = "/etc/ntp.conf"
+
+    if not os.path.isfile(local_path):
+        print(f"❌ Local file '{local_path}' not found.")
+        return
+
+    try:
+        ssh = connect_ssh(ip, vc_username, vc_password)
+        if ssh:
+            sftp = ssh.open_sftp()
+            print(f"📤 Uploading '{local_path}' to '{ip}:{remote_path}' ...")
+            sftp.put(local_path, remote_path)
+            sftp.close()
+            print("✅ File uploaded successfully.")
+            print("🔄 Restarting the NTP daemon....")
+            command = "systemctl restart ntpd"
+            output = run_command(ssh, command)
+            print(f"✅ ntpd restarted.\n{output}")
+            ssh.close()
+        else:
+            print(f"❌ Failed to connect to {ip}")
+    except Exception as e:
+        print(f"❌ Error during file upload: {e}")
+
+
 
 
 def main_menu():
     print()
     print("="*100)
-    print("ESXi NTPD Manager Menu:")
+    print(" 📝 ESXi NTPD Manager Menu:")
     print("="*100)
     
     left_column = [
@@ -485,8 +542,8 @@ def main_menu():
     right_column = [
         f"6. Run a command on ESXi hosts",
         f"7. Get vCenter NTP Config",
-        f"8. Run a command on the vCenter Server",
-        f"9. TBD",
+        f"8. Run a command on the vCenter",
+        f"9. Change vCenter NTP Config",
         f"0. Exit"
     ]
 
@@ -509,6 +566,7 @@ def main_menu():
         elif choice == "6": run_esxi_command()
         elif choice == "7": get_vc_ntp_config()
         elif choice == "8": run_vc_cmd()
+        elif choice == "9": change_vc_ntp_config()
         elif choice == "0":
             print("👋 Exiting.")
             #break
