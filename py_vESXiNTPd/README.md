@@ -18,9 +18,12 @@ py_vESXiNTPd.py
 - All features are enabled on this version
 
 py_vESXiNTPd-v2.py
-- This is an enhance version of the first script
 - The first version executes all options considering all ESXi in the same vCenter, regardless of the Cluster that they are - this can be bad for large environments with many clusters in the same vCenter
 - With this version, you can select which clusters to work for. It provided more flexibility to work in multi-cluster environment
+
+py_vESXiNTPd-v3.py
+- This is an enhance version of the previous versions
+- We have added new functions to interact with vCenter Server
 
 
 ---
