@@ -1,3 +1,6 @@
+#!/bin/python
+#
+
 from pyVim.connect import SmartConnect, Disconnect
 from pyVmomi import vim
 import ssl
@@ -146,7 +149,46 @@ def check_ntpd():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    check_ntpd_running(connected_hosts)
+    #check_ntpd_running(connected_hosts)
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        check_ntpd_running(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            check_ntpd_running([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+    
+    else:
+        print("❌ Invalid option.")
+
+
 
 
 def enable_ntpd(host):
@@ -204,7 +246,47 @@ def start_ntpd():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    start_ntp_daemon(connected_hosts)
+    #start_ntp_daemon(connected_hosts)
+
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        start_ntp_daemon(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            start_ntp_daemon([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+	
+    else:
+        print("❌ Invalid option.")
+
+
 
 
 def stop_ntp_daemon(hosts):
@@ -238,7 +320,47 @@ def stop_ntpd():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    stop_ntp_daemon(connected_hosts)
+    #stop_ntp_daemon(connected_hosts)
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        stop_ntp_daemon(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            stop_ntp_daemon([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+	
+    else:
+        print("❌ Invalid option.")
+
+
+
 
 
 def get_ntp_daemon_config(hosts):
@@ -253,8 +375,7 @@ def get_ntp_daemon_config(hosts):
             raw_config = dt_system.dateTimeInfo.ntpConfig.configFile
             print("-" * 80)
             print(f"✅ {ip} 📝 NTP Config File Content:")
-            print(raw_config)
-            print("-" * 80)
+            print("\n".join(raw_config))
         except Exception as e:
             print(f"{ip} ❌ Error retrieving NTP config file: {e}")
     return None
@@ -272,12 +393,53 @@ def get_ntpd_config():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    get_ntp_daemon_config(connected_hosts)
+    #get_ntp_daemon_config(connected_hosts)
+
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        get_ntp_daemon_config(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            get_ntp_daemon_config([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+	
+    else:
+        print("❌ Invalid option.")
+
+
 
 
 
 def update_ntp_daemon_config(hosts):
-    config_file_path = "/root/scripts/py_vESXiNTPd/ntp_config.txt"
+    #config_file_path = "/root/scripts/py_vESXiNTPd/ntp_config.txt"
+    config_file_path = input(f"Enter the path for the ntp config file: ")
     try:
         with open(config_file_path, "r") as f:
             new_config_file = [line.strip() for line in f if line.strip()]
@@ -321,7 +483,46 @@ def update_ntpd_config():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    update_ntp_daemon_config(connected_hosts)
+    #update_ntp_daemon_config(connected_hosts)
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        update_ntp_daemon_config(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            update_ntp_daemon_config([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+			
+    else:
+        print("❌ Invalid option.")
+
+
 
 
 
@@ -396,7 +597,7 @@ def run_esxi_command():
 
     if sub_option == 1:
         run_esxi_cmd(connected_hosts)
-        exit(0)
+        return
 
     elif sub_option == 0:
         main_menu()        
@@ -411,7 +612,7 @@ def run_esxi_command():
             host_selection = int(input("Select a host number: "))
             selected_host = connected_hosts[host_selection - 1]
             run_esxi_cmd([selected_host])
-            exit(0)
+            return
 
         except (ValueError, IndexError):
             print("❌ Invalid host selection.")
@@ -553,11 +754,14 @@ def main_menu():
 
     while True:
         print("-"*100)
-        choice = input('Enter your choice or "m" to show the Main Menu: ').strip().lower()
+        choice = input('Enter your choice or "m" to show the Main Menu or "q" to exit: ').strip().lower()
 
         if choice == "m":
             clear_screen()
             main_menu()
+        elif choice == "q":
+            print("👋 Exiting.")
+            exit(0)
         elif choice == "1": check_ntpd()
         elif choice == "2": start_ntpd()
         elif choice == "3": stop_ntpd()
