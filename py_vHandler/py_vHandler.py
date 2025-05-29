@@ -2,6 +2,7 @@
 
 from pyVim.connect import SmartConnect, Disconnect
 from pyVmomi import vim
+from pyVmomi import vmodl
 import ssl
 import getpass
 import atexit
@@ -20,12 +21,15 @@ print(f.renderText('py vHandler'))
 # Disable SSL certificate verification
 context = ssl._create_unverified_context()
 
-# Get vCenter login info
-print("\n🔍 py vSphere Data Handler - version 1.0\n")
-vcenter = input("Enter vCenter FQDN or IP: ")
-username = input("Enter username: ")
-password = getpass.getpass("Enter password: ")
+# Get credentials
+vcenter = input("🌐 vCenter IP/FQDN: ")
+username = "administrator@vsphere.local"
+username_input = input(f"👤 vCenter SSO Username (default: {username}): ")
+if username_input:
+    username = username_input
+password = getpass.getpass(prompt='🔐 vCenter SSO Password: ')
 print()
+
 
 # Connect to vCenter
 try:
@@ -52,13 +56,21 @@ vms = get_all_vms(content)
 
 
 def get_powered_on_vms(content):
-    """Return a list of powered-on VMs"""
+    """Return a list of tuples with (VM name, Guest IP) for powered-on and connected VMs."""
     container = content.viewManager.CreateContainerView(
         content.rootFolder, [vim.VirtualMachine], True
     )
-    powered_on_vms = [vm for vm in container.view if vm.runtime.powerState == "poweredOn" and vm.runtime.connectionState == "connected" ]
+    powered_on_vms = []
+
+    for vm in container.view:
+        if vm.runtime.powerState == "poweredOn" and vm.runtime.connectionState == "connected":
+            vm_name = vm.name
+            guest_ip = vm.guest.ipAddress if vm.guest is not None else "N/A"
+            powered_on_vms.append((vm_name, guest_ip if guest_ip else "N/A"))
+
     container.Destroy()
     return powered_on_vms
+
 
 
 def get_powered_off_vms(content):
@@ -160,40 +172,100 @@ def run_vcenter_ssh_command():
         print(f"\n❗ SSH Connection Failed: {e}")
 
 
+def get_esxi_hosts_and_ssh_status(content):
+    """Retrieve all ESXi hosts and check if SSH service is running and its startup policy."""
+    esxi_hosts_info = []
+
+    # Get all ESXi hosts in the vCenter
+    container = content.viewManager.CreateContainerView(
+        content.rootFolder, [vim.HostSystem], True
+    )
+
+    # Iterate over all ESXi hosts
+    for host in container.view:
+        host_name = host.name
+
+        # Initialize the SSH service status and startup policy
+        ssh_service_running = "unknown"
+        ssh_startup_policy = "unknown"
+        host_status = None  # To track the host's status
+
+        try:
+            # Get the service info for the host
+            service_info = host.configManager.serviceSystem.serviceInfo
+
+            # Check for the presence of SSH services
+            ssh_found = False
+            for service in service_info.service:
+                if "SSH" in service.key:  # Check if the service key contains SSH
+                    ssh_service_running = service.running
+                    ssh_startup_policy = service.policy
+                    ssh_found = True
+                    break
+
+            if not ssh_found:
+                # If SSH service is not found
+                ssh_service_running = "SSH service not found"
+                ssh_startup_policy = "N/A"
+
+        except vmodl.fault.HostCommunication as e:
+            # Suppress the error and set the status to unreachable
+            host_status = "Host unreachable"
+
+        except Exception as e:
+            # General exception handler for other errors, suppressing error details
+            host_status = "Unknown error"
+
+        # Determine the correct output
+        if host_status == "Host unreachable":
+            esxi_hosts_info.append((host_name, "Host unreachable", "N/A"))
+        else:
+            esxi_hosts_info.append((host_name, ssh_service_running, ssh_startup_policy))
+
+    container.Destroy()
+    return esxi_hosts_info
+
+
+
+
+
+
 
 
 def show_menu():
-    print("==========================================")
+    print("="*100)
     print("📋 py vSphere Handler Menu:")
-    print("------------------------------------------")
+    print("-"*100)
 
     left_column = [
         f"1. List all VMs",
-        "2. List powered-on VMs",
-        "3. List powered-off VMs",
-        "4. List VMs with VMware Tools"
+        f"2. List powered-on VMs",
+        f"3. List powered-off VMs",
+        f"4. List VMs with VMware Tools",
+        f"5. List disconnected"
     ]
 
     right_column = [
-        f"5. List disconnected",
         f"6. List datastores details",
-        "7. Run a command on vCenter",
-        "0. Exit"
+        f"7. Run a command on vCenter",
+        f"8. List SSH service status on Hosts",
+        f"9. TBD",
+        f"0. Exit"
     ]
 
     # Combine both columns row by row
     for left, right in zip(left_column, right_column):
         print(f"{left:<45} {right}")
 
-    print("=========================================")
+    print("="*100)
 
 
 
 def get_user_choice():
-    valid_choices = [str(i) for i in range(8)]  # "0" through "7"
+    valid_choices = [str(i) for i in range(9)]  # "0" through "8"
 
     while True:
-        choice = input("Enter your choice (0-7): ").strip()
+        choice = input("Enter your choice: ").strip()
         if choice in valid_choices:
             return choice
         else:
@@ -216,10 +288,12 @@ def main():
                 print("-", vm.name)
 
         elif choice == "2":
-            powered_on_vms = get_powered_on_vms(content)
-            print(f"\n⚡ Powered-On VMs (Total: {len(powered_on_vms)}):")
-            for vm in powered_on_vms:
-                print("-", vm.name)
+            powered_vms = get_powered_on_vms(content)
+            print()
+            print(f"\n⚡ Powered-On VMs (Total: {len(powered_vms)}):\n{'-' * 70}")
+            for vm_name, ip in get_powered_on_vms(content):
+                print(f"{vm_name:<50} IP: {ip}")
+
 
         elif choice == "3":
             powered_off_vms = get_powered_off_vms(content)
@@ -259,6 +333,13 @@ def main():
 
         elif choice == "7":
             run_vcenter_ssh_command()
+
+
+        elif choice == "8":
+            esxi_hosts_info = get_esxi_hosts_and_ssh_status(content)
+            for host, status, policy in esxi_hosts_info:
+                print(f"Host: {host}, SSH Running: {status}, SSH Startup Policy: {policy}")
+
 
         else:
             print("❗ Invalid choice. Try again.")
