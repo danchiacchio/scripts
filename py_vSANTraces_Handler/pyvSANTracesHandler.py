@@ -64,6 +64,12 @@ pwd = getpass.getpass(prompt='🔐 vCenter SSO Password: ')
 # Connect to vCenter using the function get_si_instance
 si = get_si_instance(vcenter, user, pwd)
 
+# Get ESXi credential
+esxi_username = "root"
+esxi_user_input = input(f"👤 ESXi Username (default: {esxi_username}) ")
+if esxi_user_input:
+    esxi_username = esxi_user_input
+esxi_password = getpass.getpass("🔐 ESXi Password: ")
 
 # Function: Get all clusters
 def get_all_clusters(si):
@@ -140,18 +146,7 @@ def run_command(ssh, command):
     error = stderr.read().decode().strip()
     return output if output else error
 
-
-def get_esxi_username():
-    esxi_username = "root"
-    esxi_user_input = input(f"👤 ESXi Username (default: {esxi_username}) ")
-    if esxi_user_input:
-	    esxi_username = esxi_user_input
-    esxi_password = getpass.getpass("🔐 ESXi Password: ")
-    return esxi_username, esxi_password
-
-
 def get_vsan_traces_details(hosts):
-    esxi_username, esxi_password = get_esxi_username()
     esxi_command = "esxcli vsan trace get"
     print()
 
@@ -183,12 +178,50 @@ def get_vsan_traces():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    get_vsan_traces_details(connected_hosts)
+    #get_vsan_traces_details(connected_hosts)
+
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        get_vsan_traces_details(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            get_vsan_traces_details([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+
+    else:
+        print("❌ Invalid option.")
+
 
 
 
 def get_vsan_traces_usage_details(hosts):
-    esxi_username, esxi_password = get_esxi_username()
     esxi_command = 'vdf -h | grep -i -E "Ramdisk|vsantraces"'
     print()
 
@@ -220,14 +253,51 @@ def get_vsan_traces_usage():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    get_vsan_traces_usage_details(connected_hosts)
+    #get_vsan_traces_usage_details(connected_hosts)
+
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        get_vsan_traces_usage_details(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            get_vsan_traces_usage_details([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+
+    else:
+        print("❌ Invalid option.")
 
 
 
 def change_vsan_traces_dir(hosts):
-    esxi_username, esxi_password = get_esxi_username()
-    new_dir_name = "new_vsantraces"
-    os_partial_data_path = input("📝 Type part of the volume path: ")
+    new_dir_name = "vsantraces"
+    os_partial_data_path = input("📝 Type part of the volume path. Example 'datastore1': ")
     print()
 
     for host in hosts:
@@ -278,12 +348,49 @@ def change_vsan_traces():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    change_vsan_traces_dir(connected_hosts)
+    #change_vsan_traces_dir(connected_hosts)
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        change_vsan_traces_dir(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            change_vsan_traces_dir([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+
+    else:
+        print("❌ Invalid option.")
+
 
 
 
 def get_vsan_traces_files_details(hosts):
-    esxi_username, esxi_password = get_esxi_username()
     print()
 
     for host in hosts:
@@ -332,12 +439,48 @@ def get_vsan_traces_files():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    get_vsan_traces_files_details(connected_hosts)
+    #get_vsan_traces_files_details(connected_hosts)
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        get_vsan_traces_files_details(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            get_vsan_traces_files_details([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+
+    else:
+        print("❌ Invalid option.")
 
 
 
 def get_all_mount_point_usage_details(hosts):
-    esxi_username, esxi_password = get_esxi_username()
     esxi_command = "df -h"
     print()
 
@@ -369,7 +512,44 @@ def get_all_mount_points():
         exit(1)
 
     connected_hosts = get_connected_hosts_in_cluster(selected_cluster)
-    get_all_mount_point_usage_details(connected_hosts)
+    #get_all_mount_point_usage_details(connected_hosts)
+
+    # Display sub-menu
+    print("\n📋 Sub-Menu:")
+    print("1. Run command on all hosts")
+    print("2. Run command on a specific host")
+    print("0. Back to the Main Menu")
+    try:
+        sub_option = int(input("Choose an option: "))
+    except ValueError:
+        print("❌ Invalid input.")
+        return
+
+    if sub_option == 1:
+        get_all_mount_point_usage_details(connected_hosts)
+        return
+
+    elif sub_option == 0:
+        main_menu()
+
+    elif sub_option == 2:
+        print("\n🖥️  Available Hosts:")
+
+        for idx, host in enumerate(connected_hosts, start=1):
+            print(f"{idx}. {host.name}")
+
+        try:
+            host_selection = int(input("Select a host number: "))
+            selected_host = connected_hosts[host_selection - 1]
+            get_all_mount_point_usage_details([selected_host])
+            return
+
+        except (ValueError, IndexError):
+            print("❌ Invalid host selection.")
+            return
+
+    else:
+        print("❌ Invalid option.")
 
 
 
@@ -379,11 +559,11 @@ def main_menu():
         print("-"*60)
         print("📝 ESXi vSAN Traces Handler")
         print("-"*60)
-        print("1. Get vSAN Traces Details on all ESXi hosts")
-        print("2. Get vSAN Traces Usage on all ESXi hosts")
+        print("1. Get vSAN Traces Details on all ESXi hosts (esxcli vsan trace get)")
+        print("2. Get vSAN Traces Usage on all ESXi hosts (vdf -h) ")
         print("3. Change vSAN Traces Dir")
         print("4. List files on the vSAN Traces Dir")
-        print("5. Get Mount Point usage on all ESXi hosts")
+        print("5. Get Mount Point usage on all ESXi hosts (df -h)")
         print("0. Exit")
         choice = input("Enter your choice: ")
 
