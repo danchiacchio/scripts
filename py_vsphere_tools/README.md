@@ -6,4 +6,8 @@ A small and handy Python script to connect to VMware vCenter and retrieve info a
 
 - Python 3.6+
 - `pyvmomi`
+- `pyVim`
 
+Install dependencies:
+```bash
+pip install pyVim pyvmomi
