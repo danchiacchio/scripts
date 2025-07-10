@@ -147,19 +147,59 @@ def disable_ssh(host):
         print(f"[{host.name}] SSH already stopped.")
     else:
         print(f"[{host.name}] ❌ SSH service not found.")
-		
+
 # Function to stop the SSH service on all ESXi hosts
-def stop_ssh_all():
+def stop_ssh_selected():
     hosts = get_hosts_in_cluster(si)
-    for host in hosts:
+    if not hosts:
+        print("No hosts found.")
+        return
+
+    print("\nAvailable Hosts in Cluster:")
+    hosts_sorted = sorted(hosts, key=lambda host: host.name.lower())
+    for idx, host in enumerate(hosts, start=1):
+        print(f"{idx}. {host.name}")
+
+    selection = input("\nEnter host number (e.g., 2), range (e.g., 1-3), or 'all': ").strip().lower()
+
+    selected_hosts = []
+
+    if selection == "all":
+        selected_hosts = hosts_sorted
+    else:
+        try:
+            parts = selection.split(",")
+            indices = set()
+
+            for part in parts:
+                if "-" in part:
+                    start, end = map(int, part.split("-"))
+                    if start < 1 or end > len(hosts_sorted) or start > end:
+                        print(f"❌ Invalid range: {part}")
+                        return
+                    indices.update(range(start - 1, end))
+                else:
+                    index = int(part)
+                    if index < 1 or index > len(hosts_sorted):
+                        print(f"❌ Invalid index: {index}")
+                        return
+                    indices.add(index - 1)
+
+            selected_hosts = [hosts_sorted[i] for i in sorted(indices)]
+
+        except Exception as e:
+            print(f"❌ Invalid input format: {e}")
+            return
+
+    for i, host in enumerate(selected_hosts, start=1):
         ip = host.name
         try:
             print(f"🔄 Stopping SSH on {ip}...")
             disable_ssh(host)
-            print()
-
+            print(f"✅ SSH stopped on {ip}")
         except Exception as e:
-            print(f"❌ Stopping SSH error on {i}: {e}")
+            print(f"❌ Error stopping SSH on {ip}: {e}")
+
 
 # Function to list all ESXi hosts and print them in a table format
 def list_esxi_hosts():
@@ -207,9 +247,53 @@ def get_management_ip(host):
 # Function to connect on each ESXi host and get the VMware Tools version
 def get_vmware_tools_version():
     hosts = get_hosts_in_cluster(si)
+    
+    if not hosts:
+        print("No hosts found.")
+        return
+
+    print("\nAvailable Hosts in Cluster:")
+    hosts_sorted = sorted(hosts, key=lambda host: host.name.lower())
+    for idx, host in enumerate(hosts_sorted, start=1):
+        print(f"{idx}. {host.name}")
+
+    selection = input("\nEnter host number (e.g., 2), range (e.g., 1-3), or 'all': ").strip().lower()
+
+    selected_hosts = []
+
+    if selection == "all":
+        selected_hosts = hosts_sorted
+    else:
+        try:
+            parts = selection.split(",")
+            indices = set()
+
+            for part in parts:
+                if "-" in part:
+                    start, end = map(int, part.split("-"))
+                    if start < 1 or end > len(hosts_sorted) or start > end:
+                        print(f"❌ Invalid range: {part}")
+                        return
+                    indices.update(range(start - 1, end))
+                else:
+                    index = int(part)
+                    if index < 1 or index > len(hosts_sorted):
+                        print(f"❌ Invalid index: {index}")
+                        return
+                    indices.add(index - 1)
+
+            selected_hosts = [hosts_sorted[i] for i in sorted(indices)]
+
+        except Exception as e:
+            print(f"❌ Invalid input format: {e}")
+            return
+
+    # Call the function to enter ESXi username and password
     esxi_username, esxi_password = esxi_credentials()
+
     table = PrettyTable(["ESXi Host", "VMware Tools VIB Version"])
-    for host in hosts:
+    
+    for i, host in enumerate(selected_hosts, start=1):
         ip = host.name
         try:
             print(f"\n🔄 Connecting to {ip} via SSH...")
@@ -249,13 +333,55 @@ def cleanup_temp_files(ssh, osdata_path):
 # Function to upgrade the VMware Tools version
 def upgrade_vmware_tools():
     hosts = get_hosts_in_cluster(si)
+    
+    if not hosts:
+        print("No hosts found.")
+        return
+
+    print("\nAvailable Hosts in Cluster:")
+    hosts_sorted = sorted(hosts, key=lambda host: host.name.lower())
+    for idx, host in enumerate(hosts_sorted, start=1):
+        print(f"{idx}. {host.name}")
+
+    selection = input("\nEnter host number (e.g., 2), range (e.g., 1-3), or 'all': ").strip().lower()
+
+    selected_hosts = []
+
+    if selection == "all":
+        selected_hosts = hosts_sorted
+    else:
+        try:
+            parts = selection.split(",")
+            indices = set()
+
+            for part in parts:
+                if "-" in part:
+                    start, end = map(int, part.split("-"))
+                    if start < 1 or end > len(hosts_sorted) or start > end:
+                        print(f"❌ Invalid range: {part}")
+                        return
+                    indices.update(range(start - 1, end))
+                else:
+                    index = int(part)
+                    if index < 1 or index > len(hosts_sorted):
+                        print(f"❌ Invalid index: {index}")
+                        return
+                    indices.add(index - 1)
+
+            selected_hosts = [hosts_sorted[i] for i in sorted(indices)]
+
+        except Exception as e:
+            print(f"❌ Invalid input format: {e}")
+            return
+
+    # Call the function to enter ESXi username and password
     esxi_username, esxi_password = esxi_credentials()
     
     local_file_path = input("Type the path to the VMware Tools file e.g. /tmp/VMware-Tools-12.5.2-core-offline-depot-ESXi-all-24697584.zip: ")
     file_name = os.path.basename(local_file_path)
     temp_dir_name = "vmware-tools-temp"
 
-    for host in hosts:
+    for i, host in enumerate(selected_hosts, start=1):
         ip = host.name
         print("=" * 80)
         print(f"Connection to ESXi host: {ip}")
@@ -326,7 +452,7 @@ while True:
         upgrade_vmware_tools()
 
     elif choice == "4":
-        stop_ssh_all()
+        stop_ssh_selected()
 
     elif choice == "0":
         print("👋 Exiting.")
