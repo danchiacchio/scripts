@@ -25,11 +25,14 @@ py_vESXiTools-v2.py
 - It can grab all ESXi hosts under the vCenter Server and create the file esxi_hosts.txt with all ESXi hosts.
 
 py_vESXiTools-v3.py
-- This is the latest version;
 - It can connect to the specified vCenter and grab all connected ESXi hosts under the vCenter;
 - In this version, the .txt file to store the hosts will not be created (it stores it in the script logic/memory);
 - If the SSH service is not running on the connected ESXi hosts, SSH will be started before executing the host's commands;
 - If you need to disable SSH service on all ESXi hosts after all, you can do that (there is an option for it).
+
+py_vESXiTools-v4.py
+- This is the newest script version;
+- With this version, we can select in what vSphere Cluster we must to work on.
 
 ---
 
