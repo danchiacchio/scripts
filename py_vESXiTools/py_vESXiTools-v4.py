@@ -55,13 +55,64 @@ def esxi_credentials():
     esxi_password = getpass.getpass("ESXi Password: ")
     return esxi_username, esxi_password
 
+# Function to get all vSphere Clusters
+def get_clusters(si):
+    content = si.RetrieveContent()
+    container = content.rootFolder  # Start from the root folder
+    viewType = [vim.ClusterComputeResource]
+    recursive = True
+
+    container_view = content.viewManager.CreateContainerView(
+        container=container,
+        type=viewType,
+        recursive=recursive
+    )
+    clusters = container_view.view
+    container_view.Destroy()
+
+    return clusters
+
 # Function to get all connected hosts
 def get_hosts():
     content = si.RetrieveContent()
-    container = content.viewManager.CreateContainerView(content.rootFolder, [vim.HostSystem], True)
-    hosts = [host for host in container.view if host.runtime.connectionState == "connected"]
+    container = content.rootFolder
+    viewType = [vim.HostSystem]
+    recursive = True
+    
+    container_view = content.viewManager.CreateContainerView(
+        container=container,
+        type=viewType,
+        recursive=recursive
+    ) 
+
+    hosts = [host for host in container_view.view if host.runtime.connectionState == "connected"]
     container.Destroy()
     return hosts
+
+# Get ESXi hosts in cluster
+def get_hosts_in_cluster(si):
+    clusters = get_clusters(si)  # Reuse your get_clusters() function
+
+    if not clusters:
+        print("No clusters found.")
+        return []
+
+    print("\nAvailable Clusters:")
+    for i, cluster in enumerate(clusters, start=1):
+        print(f"{i}. {cluster.name}")
+
+    while True:
+        try:
+            choice = int(input("\nEnter the number of the cluster to list its ESXi hosts: "))
+            if 1 <= choice <= len(clusters):
+                selected_cluster = clusters[choice - 1]
+                return selected_cluster.host
+                break
+            else:
+                print("Invalid choice. Try again!")
+        except Exception as e:
+            print(f"Error {e}")
+
 
 # Function to get the SSH service
 def get_ssh_service(host):
@@ -99,7 +150,7 @@ def disable_ssh(host):
 		
 # Function to stop the SSH service on all ESXi hosts
 def stop_ssh_all():
-    hosts = get_hosts()
+    hosts = get_hosts_in_cluster(si)
     for host in hosts:
         ip = host.name
         try:
@@ -112,7 +163,12 @@ def stop_ssh_all():
 
 # Function to list all ESXi hosts and print them in a table format
 def list_esxi_hosts():
-    hosts = get_hosts()
+    hosts = get_hosts_in_cluster(si)    
+    
+    if not hosts:
+        print("No hosts found or invalid cluster selection.")
+        return    
+
     table = PrettyTable(["ESXi Host Name", "Model", "Vendor", "ESXi Version", "ESXi Build", "Member Of", "Uptime (d hh:mm)", "Management IP"])
     for host in hosts:
         uptime_seconds = host.summary.quickStats.uptime
@@ -121,7 +177,16 @@ def list_esxi_hosts():
         uptime_minutes = (uptime_seconds % 3600) // 60
         host_uptime = f"{uptime_days}d {uptime_hours:02}:{uptime_minutes:02}" #format as d hh:mm
         management_ip = get_management_ip(host)
-        table.add_row([host.name, host.hardware.systemInfo.model, host.hardware.systemInfo.vendor, host.config.product.version, host.config.product.build, host.parent.name, host_uptime, management_ip])
+        table.add_row([
+            host.name,
+            host.hardware.systemInfo.model,
+            host.hardware.systemInfo.vendor,
+            host.config.product.version,
+            host.config.product.build,
+            host.parent.name,
+            host_uptime,
+            management_ip
+        ])
     print(table)
 
 
@@ -141,7 +206,7 @@ def get_management_ip(host):
 
 # Function to connect on each ESXi host and get the VMware Tools version
 def get_vmware_tools_version():
-    hosts = get_hosts()
+    hosts = get_hosts_in_cluster(si)
     esxi_username, esxi_password = esxi_credentials()
     table = PrettyTable(["ESXi Host", "VMware Tools VIB Version"])
     for host in hosts:
@@ -183,7 +248,7 @@ def cleanup_temp_files(ssh, osdata_path):
 
 # Function to upgrade the VMware Tools version
 def upgrade_vmware_tools():
-    hosts = get_hosts()
+    hosts = get_hosts_in_cluster(si)
     esxi_username, esxi_password = esxi_credentials()
     
     local_file_path = input("Type the path to the VMware Tools file e.g. /tmp/VMware-Tools-12.5.2-core-offline-depot-ESXi-all-24697584.zip: ")
