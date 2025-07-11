@@ -19,6 +19,7 @@ A Python script that automates the process of **checking** and **upgrading VMwar
 
 py_vESXiTools.py
 - It is necessary to manually create the esxi_hosts.txt file and add all ESXi hosts into this file.
+- If you plan to upgrade VMware Tools on Standalone hosts, you can use this script version.
 
 py_vESXiTools-auto.py
 - It's not necessary create a source file with all ESXi hosts.
