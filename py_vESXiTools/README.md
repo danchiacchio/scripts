@@ -18,21 +18,12 @@ A Python script that automates the process of **checking** and **upgrading VMwar
 ## Script versions:
 
 py_vESXiTools.py
-- This is the first version;
 - It is necessary to manually create the esxi_hosts.txt file and add all ESXi hosts into this file.
 
-py_vESXiTools-v2.py
-- It can grab all ESXi hosts under the vCenter Server and create the file esxi_hosts.txt with all ESXi hosts.
-
-py_vESXiTools-v3.py
-- It can connect to the specified vCenter and grab all connected ESXi hosts under the vCenter;
-- In this version, the .txt file to store the hosts will not be created (it stores it in the script logic/memory);
-- If the SSH service is not running on the connected ESXi hosts, SSH will be started before executing the host's commands;
-- If you need to disable SSH service on all ESXi hosts after all, you can do that (there is an option for it).
-
-py_vESXiTools-v4.py
-- This is the newest script version;
+py_vESXiTools-auto.py
+- It's not necessary create a source file with all ESXi hosts.
 - With this version, we can select in what vSphere Cluster we must to work on.
+- There is a possibility to work on a specific host inside a cluster.
 
 ---
 
