@@ -22,8 +22,8 @@ A Python script that automates the process of manager the NTP daemon on connecte
 - SSH must be enabled on all ESXi hosts
 - All ESXi hosts must use the **same root password**
 
-Install `paramiko` if needed:
+Install paramiko and pyvmomi if needed:
 
 ```bash
-pip install paramiko
+pip install pyvmomi paramiko
 
