@@ -34,8 +34,8 @@ py_vESXiTools-auto.py
 - All ESXi hosts must use the **same root password**
 - Download the VMware Tools Package (VMware Tools Offline VIB Bundle .zip) and place it on the same script directory
 
-Install `paramiko` if needed:
+Install paramiko and prettytable if needed:
 
 ```bash
 pip install paramiko
-
+pip install prettytable
