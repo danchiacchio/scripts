@@ -4,6 +4,7 @@ A Python-based automation script to patch multiple ESXi hosts using `esxcli`, wi
 
 ## 🚀 Features
 
+- 🔄 Enable SSH on the ESXi if not enabled
 - ✅ Puts hosts into Maintenance Mode via vCenter API (with **vSAN Ensure Accessibility**)
 - 📦 Uploads and applies a local ESXi patch depot file (`.zip`) via SSH
 - 🔄 Automatically reboots hosts if patch is applied
@@ -18,7 +19,7 @@ A Python-based automation script to patch multiple ESXi hosts using `esxcli`, wi
 - Python 3.6+
 - Access to:
   - vCenter Server
-  - ESXi hosts with SSH enabled
+  - ESXi hosts with SSH enabled (required, but it not mandatory)
 - Patch depot file (e.g. `VMware-ESXi-8.0U3f-24784735-depot.zip`) in the script directory
 - Required Python packages:
 
