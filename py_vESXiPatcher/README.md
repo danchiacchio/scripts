@@ -24,13 +24,17 @@ A Python-based automation script to patch multiple ESXi hosts using `esxcli`, wi
 
 ```bash
 pip install pyvmomi paramiko
+```
 
 ---
 
 ## Script Usage
 
+```bash
 ./py_vESXiPather.py <ESXi_host1> <ESXi_host2>....<ESXi-host'n'> --patch-file <Patch File> --patch-profile <Patch Profile Name>
+```
 
 Example:
-
+```bash
 ./py_vESXiPather.py dr-esxi-01.lab.local dr-esxi-02.lab.local dr-esxi-03.lab.local --patch-file VMware-ESXi-8.0U3f-24784735-depot.zip --patch-profile ESXi-8.0U3f-24784735-standard
+```
