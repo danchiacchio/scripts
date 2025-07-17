@@ -28,7 +28,7 @@ pip install pyvmomi paramiko
 
 ---
 
-## Script Usage
+## 📝 Script Usage
 
 ```bash
 ./py_vESXiPather.py <ESXi_host1> <ESXi_host2>....<ESXi-host'n'> --patch-file <Patch File> --patch-profile <Patch Profile Name>
