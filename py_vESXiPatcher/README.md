@@ -21,6 +21,7 @@ A Python-based automation script to patch multiple ESXi hosts using `esxcli`, wi
   - vCenter Server
   - ESXi hosts with SSH enabled (required, but it not mandatory)
 - Patch depot file (e.g. `VMware-ESXi-8.0U3f-24784735-depot.zip`) in the script directory
+- Patch profile name - you can get it in the Patch documentation
 - Required Python packages:
 
 ```bash
