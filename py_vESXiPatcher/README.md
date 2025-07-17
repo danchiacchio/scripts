@@ -4,7 +4,7 @@ A Python-based automation script to patch multiple ESXi hosts using `esxcli`, wi
 
 ## 🚀 Features
 
-- ✅ Puts hosts into Maintenance Mode via vCenter API (with **vSAN evacuateAllData**)
+- ✅ Puts hosts into Maintenance Mode via vCenter API (with **vSAN Ensure Accessibility**)
 - 📦 Uploads and applies a local ESXi patch depot file (`.zip`) via SSH
 - 🔄 Automatically reboots hosts if patch is applied
 - 🔁 Waits for host to come back online before exiting maintenance mode
