@@ -26,4 +26,12 @@ Install paramiko and pyvmomi if needed:
 
 ```bash
 pip install pyvmomi paramiko
+```
 
+---
+
+## 📝 Script Usage
+
+```bash
+python3 py_ESXiNTPd.py
+```
