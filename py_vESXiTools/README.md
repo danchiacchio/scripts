@@ -47,12 +47,12 @@ pip install prettytable
 
 ## Script Usage
 
-To use the "manual" version of the script, you should update the following variables with your values:
+To use the "manual" version of the script, you should update the following variables with your values (the following variables values it's just an example):
 
- 27 hosts_file = "esxi_hosts.txt"
- 29 username = "root"
- 30 local_file_path = "VMware-Tools-12.5.2-core-offline-depot-ESXi-all-24697584.zip"
- 31 temp_dir_name = "vmware-tools-temp"
+- line 27 hosts_file = "esxi_hosts.txt"
+- line 29 username = "root"
+- line 30 local_file_path = "VMware-Tools-12.5.2-core-offline-depot-ESXi-all-24697584.zip"
+- line 31 temp_dir_name = "vmware-tools-temp"
 
 ```bash
 python3 py_vESXiTools.py
