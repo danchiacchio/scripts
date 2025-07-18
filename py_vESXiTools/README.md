@@ -34,9 +34,32 @@ py_vESXiTools-auto.py
 - `paramiko` library (SSH connections)
 - All ESXi hosts must use the **same root password**
 - Download the VMware Tools Package (VMware Tools Offline VIB Bundle .zip) and place it on the same script directory
+- vCenter and ESXi credentials
 
 Install paramiko and prettytable if needed:
 
 ```bash
 pip install paramiko
 pip install prettytable
+```
+
+---
+
+## Script Usage
+
+To use the "manual" version of the script, you should update the following variables with your values:
+
+ 27 hosts_file = "esxi_hosts.txt"
+ 29 username = "root"
+ 30 local_file_path = "VMware-Tools-12.5.2-core-offline-depot-ESXi-all-24697584.zip"
+ 31 temp_dir_name = "vmware-tools-temp"
+
+```bash
+python3 py_vESXiTools.py
+```
+
+To use the "auto" version of the script, you just run the script:
+
+```bash
+python3 py_vESXiTools-auto.py
+```
