@@ -23,9 +23,18 @@ This script is a helper utility to connect to a VMware vCenter, list clusters, a
   - `getpass`
   - `ssl`
   - `os`, `sys`
+- vCenter and ESXi credentials
 
 You can install the required modules with:
 
 ```bash
 pip install pyvmomi paramiko
+```
 
+---
+
+## 📝 Script Usage
+
+```bash
+python3 pyvSANTracesHandler.py
+```
