@@ -45,7 +45,7 @@ pip install prettytable
 
 ---
 
-## Script Usage
+## 📝 Script Usage
 
 To use the "manual" version of the script, you should update the following variables with your values (the following variables values it's just an example):
 
