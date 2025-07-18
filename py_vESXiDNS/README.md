@@ -45,4 +45,12 @@ py_vESXiDNS-v3.py
 
 ```bash
 pip install pyvmomi paramiko
+```
 
+---
+
+## 📝 Script Usage
+
+```bash
+python3 py_vESXiDNS-v3.py
+```
