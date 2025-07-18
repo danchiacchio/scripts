@@ -18,9 +18,19 @@ This Python script connects to a VMware vCenter server and retrieves detailed in
 
 - Python 3.x
 - `pyVmomi` library
+- vCenter credentials
 
 Install dependencies with:
 
 ```bash
 pip install pyvmomi
+```
+
+---
+
+## 📝 Script Usage
+
+```bash
+python3 py_vGetVMSnapshots.py 
+```
 
